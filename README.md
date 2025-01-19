@@ -1,2 +1,3 @@
-# JameGame45
+# JameGam45
+
 My submission for Jame Gam #45. Made in Godot.
