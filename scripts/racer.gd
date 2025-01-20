@@ -1,1 +1,2 @@
+class_name Racer
 extends CharacterBody2D
