@@ -1,8 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://cd1t6pacpxtv4"]
+[gd_scene load_steps=3 format=3 uid="uid://cd1t6pacpxtv4"]
 
 [ext_resource type="PackedScene" uid="uid://bvwq5jvjakklc" path="res://scenes/racer.tscn" id="1_wxp5r"]
+[ext_resource type="PackedScene" uid="uid://ciueiu4g3jmyh" path="res://scenes/test_track.tscn" id="2_mr5bu"]
 
 [node name="Main" type="Node"]
 
+[node name="TestTrack" parent="." instance=ExtResource("2_mr5bu")]
+
 [node name="Racer" parent="." instance=ExtResource("1_wxp5r")]
-position = Vector2(152, 195)
+position = Vector2(309, 158)
