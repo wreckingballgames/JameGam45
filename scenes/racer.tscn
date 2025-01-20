@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://bvwq5jvjakklc"]
+
+[ext_resource type="Script" path="res://scripts/racer.gd" id="1_3wtrc"]
+[ext_resource type="Texture2D" uid="uid://b6ur20t1tlqo7" path="res://icon.svg" id="1_j7x1r"]
+
+[node name="Racer" type="CharacterBody2D"]
+collision_layer = 64
+collision_mask = 64
+script = ExtResource("1_3wtrc")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_j7x1r")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]

@@ -74,7 +74,7 @@ turn_right={
 2d_physics/layer_4="pickups"
 2d_physics/layer_5="attacks"
 2d_physics/layer_6="finish_line"
-2d_physics/layer_7="players"
+2d_physics/layer_7="racers"
 
 [rendering]
 
