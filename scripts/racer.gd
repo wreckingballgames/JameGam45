@@ -40,6 +40,7 @@ const sprite_filenames: PackedStringArray = [
 @export var top_acceleration: float = 50.0
 @export var sprite_folder_path: String
 @export var acceleration_rate: float = 5.0
+@export var slide_force: float = 10.0
 @export var brake_rate: float = 0.05
 @export var constant_deceleration_rate: float = 0.005
 
@@ -85,6 +86,15 @@ func handle_input() -> void:
 		turn_left()
 	elif Input.is_action_just_pressed("turn_right"):
 		turn_right()
+	
+	# Combat input
+	if Input.is_action_just_pressed("slide_left"):
+		slide_left()
+	elif Input.is_action_just_pressed("slide_right"):
+		slide_right()
+	
+	if Input.is_action_just_released("shoot"):
+		shoot()
 
 
 func update_velocity(direction: Vector2) -> void:
@@ -124,6 +134,22 @@ func turn_right() -> void:
 	update_velocity(forward)
 
 
+func slide_left() -> void:
+	# TODO: Use AnimationPlayer for fancy sliding
+	global_position += directions[get_left_direction(forward_direction_pointer)] * slide_force
+
+
+func slide_right() -> void:
+	# TODO: Use AnimationPlayer for fancy sliding
+	global_position += directions[get_right_direction(forward_direction_pointer)] * slide_force
+
+
+# TODO
+func shoot() -> void:
+	print("pew pew")
+	pass
+
+
 func get_opposite_direction(direction: Direction) -> Direction:
 	# I considered a basic modular arithmetic system for directions,
 	#   but this is much simpler!
@@ -144,6 +170,56 @@ func get_opposite_direction(direction: Direction) -> Direction:
 			return Direction.East
 		Direction.NorthWest:
 			return Direction.SouthEast
+		_:
+			# This case should never be reached.
+			return Direction.NumberOfDirections
+
+
+func get_left_direction(direction: Direction) -> Direction:
+	# This is the second in a series of functions that approximate modular
+	#   arithmetic for Directions. Lookup tables are pretty cash money, though.
+	match direction:
+		Direction.North:
+			return Direction.West
+		Direction.NorthEast:
+			return Direction.NorthWest
+		Direction.East:
+			return Direction.North
+		Direction.SouthEast:
+			return Direction.NorthEast
+		Direction.South:
+			return Direction.East
+		Direction.SouthWest:
+			return Direction.SouthEast
+		Direction.West:
+			return Direction.South
+		Direction.NorthWest:
+			return Direction.SouthWest
+		_:
+			# This case should never be reached.
+			return Direction.NumberOfDirections
+
+
+func get_right_direction(direction: Direction) -> Direction:
+	# This is the third in a series of functions that approximate modular
+	#   arithmetic for Directions. Lookup tables are pretty cash money, though.
+	match direction:
+		Direction.North:
+			return Direction.East
+		Direction.NorthEast:
+			return Direction.SouthEast
+		Direction.East:
+			return Direction.South
+		Direction.SouthEast:
+			return Direction.SouthWest
+		Direction.South:
+			return Direction.West
+		Direction.SouthWest:
+			return Direction.NorthWest
+		Direction.West:
+			return Direction.North
+		Direction.NorthWest:
+			return Direction.NorthEast
 		_:
 			# This case should never be reached.
 			return Direction.NumberOfDirections
