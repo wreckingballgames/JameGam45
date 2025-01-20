@@ -44,6 +44,7 @@ const sprite_filenames: PackedStringArray = [
 @export var missile_scene: PackedScene
 @export var missle_spawn_distance: float = 50.0
 @export var acceleration_rate: float = 5.0
+@export var slide_cooldown_duration: float = 3.0
 @export var slide_force: float = 10.0
 @export var brake_rate: float = 0.05
 @export var constant_deceleration_rate: float = 0.005
@@ -63,6 +64,7 @@ var forward_direction_pointer := Direction.North:
 
 @onready var sprite_2d: Sprite2D = %Sprite2D
 @onready var missiles: Node = %Missiles
+@onready var slide_cooldown_timer: Timer = %SlideCooldown
 
 
 func _ready() -> void:
@@ -140,13 +142,19 @@ func turn_right() -> void:
 
 
 func slide_left() -> void:
+	if slide_cooldown_timer.time_left != 0:
+		return
 	# TODO: Use AnimationPlayer for fancy sliding
 	global_position += directions[get_left_direction(forward_direction_pointer)] * slide_force
+	slide_cooldown_timer.start(slide_cooldown_duration)
 
 
 func slide_right() -> void:
+	if slide_cooldown_timer.time_left != 0:
+		return
 	# TODO: Use AnimationPlayer for fancy sliding
 	global_position += directions[get_right_direction(forward_direction_pointer)] * slide_force
+	slide_cooldown_timer.start(slide_cooldown_duration)
 
 
 func shoot() -> void:
