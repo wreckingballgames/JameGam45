@@ -1,13 +1,21 @@
-[gd_scene load_steps=3 format=3 uid="uid://bvwq5jvjakklc"]
+[gd_scene load_steps=6 format=3 uid="uid://bvwq5jvjakklc"]
 
 [ext_resource type="Script" path="res://scripts/racer.gd" id="1_3wtrc"]
+[ext_resource type="PackedScene" uid="uid://diy51rqk03rn6" path="res://scenes/missile.tscn" id="2_pscka"]
 [ext_resource type="Texture2D" uid="uid://hn3y8euqsgmp" path="res://assets/pick_up/east.png" id="2_rtomp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_obl1l"]
+radius = 8.01561
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lgcxs"]
+size = Vector2(16, 15)
 
 [node name="Racer" type="CharacterBody2D"]
 collision_layer = 64
 collision_mask = 64
 script = ExtResource("1_3wtrc")
 sprite_folder_path = "res://assets/pick_up/"
+missile_scene = ExtResource("2_pscka")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 unique_name_in_owner = true
@@ -15,4 +23,18 @@ position = Vector2(0, -11)
 texture = ExtResource("2_rtomp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -12)
+position = Vector2(0, -12.5)
+shape = SubResource("CircleShape2D_obl1l")
+
+[node name="AttackDetector" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 16
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackDetector"]
+position = Vector2(0, -12.5)
+shape = SubResource("RectangleShape2D_lgcxs")
+
+[node name="Missiles" type="Node" parent="."]
+unique_name_in_owner = true
+
+[connection signal="area_entered" from="AttackDetector" to="." method="_on_attack_detector_area_entered"]

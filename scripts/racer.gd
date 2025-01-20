@@ -37,8 +37,12 @@ const sprite_filenames: PackedStringArray = [
 	"northwest.png",
 ]
 
+@export var chassis_hp: int = 10
+@export var laps_remaining: int = 3
 @export var top_acceleration: float = 50.0
 @export var sprite_folder_path: String
+@export var missile_scene: PackedScene
+@export var missle_spawn_distance: float = 50.0
 @export var acceleration_rate: float = 5.0
 @export var slide_force: float = 10.0
 @export var brake_rate: float = 0.05
@@ -58,6 +62,7 @@ var forward_direction_pointer := Direction.North:
 			forward_direction_pointer = value
 
 @onready var sprite_2d: Sprite2D = %Sprite2D
+@onready var missiles: Node = %Missiles
 
 
 func _ready() -> void:
@@ -88,9 +93,9 @@ func handle_input() -> void:
 		turn_right()
 	
 	# Combat input
-	if Input.is_action_just_pressed("slide_left"):
+	if Input.is_action_just_released("slide_left"):
 		slide_left()
-	elif Input.is_action_just_pressed("slide_right"):
+	elif Input.is_action_just_released("slide_right"):
 		slide_right()
 	
 	if Input.is_action_just_released("shoot"):
@@ -144,10 +149,13 @@ func slide_right() -> void:
 	global_position += directions[get_right_direction(forward_direction_pointer)] * slide_force
 
 
-# TODO
 func shoot() -> void:
-	print("pew pew")
-	pass
+	# TODO: Genericize?
+	var missile_instance = missile_scene.instantiate() as Missile
+	missile_instance.top_level = true
+	missile_instance.direction = forward
+	missile_instance.global_position = global_position + (forward * missle_spawn_distance)
+	missiles.add_child(missile_instance, true)
 
 
 func get_opposite_direction(direction: Direction) -> Direction:
@@ -226,10 +234,17 @@ func get_right_direction(direction: Direction) -> Direction:
 
 
 # TODO: Enable calculation of "MPH" using racer velocity
-# TODO: Enable racer sliding left and right
-# TODO: Enable racer shooting forward
 # TODO: Enable racer to spin out
 # TODO: Enable racer to take damage and be exploded then respawned
 # TODO: Enable racer to be crossed by finish line
 # TODO: Enable racer to collide with and be pushed away from
 #   obstacles and other racers
+
+
+# TODO
+func get_attacked() -> void:
+	pass
+
+
+func _on_attack_detector_area_entered(area: Area2D) -> void:
+	get_attacked()
