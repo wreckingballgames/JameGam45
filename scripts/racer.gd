@@ -42,13 +42,14 @@ const sprite_filenames: PackedStringArray = [
 @export var top_acceleration: float = 50.0
 @export var sprite_folder_path: String
 @export var missile_scene: PackedScene
-@export var missle_spawn_distance: float = 50.0
+@export var missile_spawn_distance: float = 50.0
 @export var acceleration_rate: float = 5.0
 @export var slide_duration: float = 0.25
 @export var slide_cooldown_duration: float = 3.0
 @export var slide_force: float = 150.0
 @export var brake_rate: float = 0.05
 @export var constant_deceleration_rate: float = 0.005
+@export var turn_tick_duration: float = 0.1
 
 var forward := directions[Direction.North]
 var forward_direction_pointer := Direction.North:
@@ -62,10 +63,12 @@ var forward_direction_pointer := Direction.North:
 			forward_direction_pointer = 0
 		else:
 			forward_direction_pointer = value
+var turn_timer_just_finished := false
 
 @onready var sprite_2d: Sprite2D = %Sprite2D
 @onready var missiles: Node = %Missiles
 @onready var slide_cooldown_timer: Timer = %SlideCooldown
+@onready var turn_timer: Timer = %TurnTimer
 
 
 func _ready() -> void:
@@ -89,11 +92,18 @@ func handle_input() -> void:
 		brake()
 	
 	# Turning input
-	# TODO: Make it possible to hold turn and only slowly turn over time
-	if Input.is_action_just_pressed("turn_left"):
-		turn_left()
-	elif Input.is_action_just_pressed("turn_right"):
-		turn_right()
+	if Input.is_action_pressed("turn_left"):
+		if turn_timer.is_stopped() and turn_timer_just_finished:
+			turn_left()
+		elif turn_timer.is_stopped():
+			turn_timer.start(turn_tick_duration)
+	elif Input.is_action_pressed("turn_right"):
+		if turn_timer.is_stopped() and turn_timer_just_finished:
+			turn_right()
+		elif turn_timer.is_stopped():
+			turn_timer.start(turn_tick_duration)
+	else:
+		turn_timer.stop()
 	
 	# Combat input
 	if Input.is_action_just_released("slide_left"):
@@ -132,6 +142,7 @@ func turn_left() -> void:
 	set_sprite_to_forward()
 	# TODO: Update velocity relative to whether turning while accelerating forward or backward
 	update_velocity(forward)
+	turn_timer_just_finished = false
 
 
 func turn_right() -> void:
@@ -140,6 +151,7 @@ func turn_right() -> void:
 	set_sprite_to_forward()
 	# TODO: Update velocity relative to whether turning while accelerating forward or backward
 	update_velocity(forward)
+	turn_timer_just_finished = false
 
 
 func slide_left() -> void:
@@ -167,7 +179,7 @@ func shoot() -> void:
 	var missile_instance = missile_scene.instantiate() as Missile
 	missile_instance.top_level = true
 	missile_instance.direction = forward
-	missile_instance.global_position = global_position + (forward * missle_spawn_distance)
+	missile_instance.global_position = global_position + (forward * missile_spawn_distance)
 	missiles.add_child(missile_instance, true)
 
 
@@ -261,3 +273,7 @@ func get_attacked() -> void:
 
 func _on_attack_detector_area_entered(area: Area2D) -> void:
 	get_attacked()
+
+
+func _on_turn_timer_timeout() -> void:
+	turn_timer_just_finished = true

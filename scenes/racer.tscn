@@ -42,4 +42,9 @@ unique_name_in_owner = true
 wait_time = 3.0
 one_shot = true
 
+[node name="TurnTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+one_shot = true
+
 [connection signal="area_entered" from="AttackDetector" to="." method="_on_attack_detector_area_entered"]
+[connection signal="timeout" from="TurnTimer" to="." method="_on_turn_timer_timeout"]
