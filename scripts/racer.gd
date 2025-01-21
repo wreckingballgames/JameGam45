@@ -44,8 +44,9 @@ const sprite_filenames: PackedStringArray = [
 @export var missile_scene: PackedScene
 @export var missle_spawn_distance: float = 50.0
 @export var acceleration_rate: float = 5.0
+@export var slide_duration: float = 0.25
 @export var slide_cooldown_duration: float = 3.0
-@export var slide_force: float = 10.0
+@export var slide_force: float = 150.0
 @export var brake_rate: float = 0.05
 @export var constant_deceleration_rate: float = 0.005
 
@@ -144,16 +145,20 @@ func turn_right() -> void:
 func slide_left() -> void:
 	if slide_cooldown_timer.time_left != 0:
 		return
-	# TODO: Use AnimationPlayer for fancy sliding
-	global_position += directions[get_left_direction(forward_direction_pointer)] * slide_force
+	var tween := get_tree().create_tween()
+	var old_velocity := velocity
+	tween.tween_property(self, "velocity", velocity + directions[get_left_direction(forward_direction_pointer)] * slide_force, slide_duration)
+	tween.tween_property(self, "velocity", old_velocity, slide_duration)
 	slide_cooldown_timer.start(slide_cooldown_duration)
 
 
 func slide_right() -> void:
 	if slide_cooldown_timer.time_left != 0:
 		return
-	# TODO: Use AnimationPlayer for fancy sliding
-	global_position += directions[get_right_direction(forward_direction_pointer)] * slide_force
+	var tween := get_tree().create_tween()
+	var old_velocity := velocity
+	tween.tween_property(self, "velocity", velocity + directions[get_right_direction(forward_direction_pointer)] * slide_force, slide_duration)
+	tween.tween_property(self, "velocity", old_velocity, slide_duration)
 	slide_cooldown_timer.start(slide_cooldown_duration)
 
 
