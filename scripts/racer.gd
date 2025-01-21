@@ -43,6 +43,8 @@ const sprite_filenames: PackedStringArray = [
 @export var sprite_folder_path: String
 @export var missile_scene: PackedScene
 @export var missile_spawn_distance: float = 50.0
+@export var missile_capacity: int = 5
+@export var missiles_remaining: int = 2
 @export var acceleration_rate: float = 5.0
 @export var slide_duration: float = 0.25
 @export var slide_cooldown_duration: float = 3.0
@@ -176,11 +178,15 @@ func slide_right() -> void:
 
 func shoot() -> void:
 	# TODO: Genericize?
+	if missiles_remaining <= 0:
+		# TODO: Give feedback for trying to fire missiles when empty (like a "click" sound)
+		return
 	var missile_instance = missile_scene.instantiate() as Missile
 	missile_instance.top_level = true
 	missile_instance.direction = forward
 	missile_instance.global_position = global_position + (forward * missile_spawn_distance)
 	missiles.add_child(missile_instance, true)
+	missiles_remaining -= 1
 
 
 func get_opposite_direction(direction: Direction) -> Direction:
